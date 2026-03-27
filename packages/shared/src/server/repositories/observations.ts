@@ -153,37 +153,18 @@ export const getObservationsForTrace = async <IncludeIO extends boolean>(
     project_id,
     type,
     parent_observation_id,
-    environment,
     start_time,
     end_time,
     name,
     level,
-    status_message,
-    version,
-    ${includeIO === true ? "input, output, metadata," : ""}
-    provided_model_name,
-    internal_model_id,
-    model_parameters,
-    provided_usage_details,
-    usage_details,
-    provided_cost_details,
-    cost_details,
-    total_cost,
-    usage_pricing_tier_id,
-    usage_pricing_tier_name,
-    completion_start_time,
-    prompt_id,
-    prompt_name,
-    prompt_version,
-    tool_definitions,
-    tool_calls,
-    tool_call_names,
+    ${includeIO === true ? "environment, status_message, version, input, output, metadata, provided_model_name, internal_model_id, model_parameters, provided_usage_details, usage_details, provided_cost_details, cost_details, total_cost, usage_pricing_tier_id, usage_pricing_tier_name, completion_start_time, prompt_id, prompt_name, prompt_version, tool_definitions, tool_calls, tool_call_names," : ""}
     created_at,
     updated_at,
     event_ts
   FROM observations
   WHERE trace_id = {traceId: String}
   AND project_id = {projectId: String}
+  ${includeIO === true ? "" : "AND level != 'DEBUG'"}
    ${timestamp ? `AND start_time >= {traceTimestamp: DateTime64(3)} - ${TRACE_TO_OBSERVATIONS_INTERVAL}` : ""}
   ${skipDedup ? "" : "ORDER BY event_ts DESC"}
   ${skipDedup ? "" : "LIMIT 1 BY id, project_id"}`;
